@@ -1,4 +1,4 @@
-﻿//using static LINQ.DataSources.Source;
+﻿using static LINQ.DataSources.Source;
 namespace LINQ
 {
 	internal class Program
@@ -534,6 +534,167 @@ namespace LINQ
 			//foreach (var item in result)
 			//	Console.WriteLine(item);
 			#endregion
+			/// Q1
+			var result1 = ProductList
+				.Where(p => p.Category == "Seafood")
+				.Select(p => new { p.ProductName, p.UnitPrice });
+
+			foreach (var p in result1)
+			{
+				Console.WriteLine($"{p.ProductName} - {p.UnitPrice}");
+			}
+
+
+			// Q2
+			var result2 = ProductList.Select(p => p.ProductName);
+
+			foreach (var name in result2)
+			{
+				Console.WriteLine(name);
+			}
+
+
+			// Q3
+			var result3 = ProductList
+				.OrderBy(p => p.UnitPrice)
+				.Select(p => new { p.ProductName, p.UnitPrice });
+
+			foreach (var p in result3)
+			{
+				Console.WriteLine($"{p.ProductName} - {p.UnitPrice}");
+			}
+
+
+			// Q4
+			var result4 = ProductList
+				.Where(p => p.UnitPrice >= 10 && p.UnitPrice <= 30);
+
+			foreach (var p in result4)
+			{
+				Console.WriteLine($"{p.ProductName} - {p.UnitPrice}");
+			}
+
+
+			// Q5
+			var result5 = ProductList
+				.Where(p => p.UnitsInStock > 0 && p.Category == "Condiments");
+
+			foreach (var p in result5)
+			{
+				Console.WriteLine(p.ProductName);
+			}
+
+
+			// Q6
+			var result6 = ProductList.Select(p => new
+			{
+				Name = p.ProductName,
+				Price = p.UnitPrice,
+				StockStatus = p.UnitsInStock > 0 ? "Available" : "Out of Stock"
+			});
+
+			foreach (var p in result6)
+			{
+				Console.WriteLine($"{p.Name} - {p.Price} - {p.StockStatus}");
+			}
+
+
+			// Q7
+			var result7 = ProductList.Select((p, index) => new
+			{
+				Position = index + 1,
+				p.ProductName
+			});
+
+			foreach (var p in result7)
+			{
+				Console.WriteLine($"{p.Position} - {p.ProductName}");
+			}
+
+
+			// Q8
+			var result8 = ProductList
+				.OrderBy(p => p.Category)
+				.ThenByDescending(p => p.UnitPrice);
+
+			foreach (var p in result8)
+			{
+				Console.WriteLine($"{p.Category} - {p.ProductName} - {p.UnitPrice}");
+			}
+
+
+			// Q9
+			var result9 = ProductList
+				.Where(p => p.Category == "Beverages")
+				.OrderByDescending(p => p.UnitsInStock)
+				.Select(p => new { p.ProductName, p.UnitsInStock });
+
+			foreach (var p in result9)
+			{
+				Console.WriteLine($"{p.ProductName} - {p.UnitsInStock}");
+			}
+
+
+			// Q10
+			var result10 =
+				from c in CustomerList
+				from o in c.Orders
+				where o.OrderDate.Year >= 1997
+				select new
+				{
+					c.CustomerID,
+					o.OrderDate
+				};
+
+			foreach (var o in result10)
+			{
+				Console.WriteLine($"{o.CustomerID} - {o.OrderDate}");
+			}
+
+
+			// Q11
+			var result11 = ProductList.Select((p, index) => new
+			{
+				Position = index + 1,
+				p.ProductName
+			});
+
+			foreach (var p in result11)
+			{
+				Console.WriteLine($"{p.Position} - {p.ProductName}");
+			}
+
+
+			// Q12
+			string[] Arr =
+			{
+	"aPPLE",
+	"AbAcUs",
+	"bRaNcH",
+	"BlUeBeRrY",
+	"ClOvEr",
+	"cHeRry"
+};
+
+			var result12 = Arr
+				.OrderBy(s => s.Length)
+				.ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
+
+			foreach (var s in result12)
+			{
+				Console.WriteLine(s);
+			}
+
+
+			// Q13
+			var result13 = Arr
+				.Where(s => s.Length > 1 && char.ToLowerInvariant(s[1]) == 'i')
+				.Reverse();
+
+			foreach (var s in result13)
+			{
+				Console.WriteLine(s);
+			}
 		}
 	}
 }
