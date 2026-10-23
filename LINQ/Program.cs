@@ -1,4 +1,6 @@
-﻿using static LINQ.DataSources.Source;
+﻿using LINQ.Models;
+using System;
+using static LINQ.DataSources.Source;
 namespace LINQ
 {
 	internal class Program
@@ -695,6 +697,209 @@ namespace LINQ
 			{
 				Console.WriteLine(s);
 			}
+
+			// TASK 2 
+             // Q1
+             var mostExpensiveProducts = ProductList
+	            .Where(p => p.UnitPrice == ProductList.Max(x => x.UnitPrice));
+
+			foreach (var p in mostExpensiveProducts)
+				Console.WriteLine($"{p.ProductName} - {p.UnitPrice}");
+
+
+			// Q2
+			var page2 = ProductList
+				.Skip(5)
+				.Take(5);
+
+			foreach (var p in page2)
+				Console.WriteLine(p.ProductName);
+
+
+			// Q3
+			var productsUnder25 = ProductList
+				.TakeWhile(p => p.UnitPrice < 25);
+
+			foreach (var p in productsUnder25)
+				Console.WriteLine(p.ProductName);
+
+
+			// Q4
+			bool allSeafoodInStock = ProductList
+				.Where(p => p.Category == "Seafood")
+				.All(p => p.UnitsInStock > 0);
+
+			Console.WriteLine(allSeafoodInStock);
+
+
+			// Q5
+			int[] ids = { 3, 9, 13, 18 };
+
+			bool contains9 = ids.Contains(9);
+
+			Console.WriteLine(contains9);
+
+
+			// Q6
+			var productsByCategory = ProductList
+				.GroupBy(p => p.Category);
+
+			foreach (var group in productsByCategory)
+			{
+				Console.WriteLine($"{group.Key}: {group.Count()}");
+			}
+
+
+			// Q7
+			var productNamesByCategory = ProductList
+				.GroupBy(p => p.Category)
+				.Select(g => new
+				{
+					Category = g.Key,
+					ProductNames = g.Select(p => p.ProductName)
+				});
+
+			foreach (var group in productNamesByCategory)
+			{
+				Console.WriteLine(group.Category);
+
+				foreach (var name in group.ProductNames)
+					Console.WriteLine(name);
+			}
+
+
+			// Q8
+			var categoriesWithMoreThan3Products = ProductList
+				.GroupBy(p => p.Category)
+				.Where(g => g.Count() > 3)
+				.Select(g => g.Key);
+
+			foreach (var category in categoriesWithMoreThan3Products)
+				Console.WriteLine(category);
+
+
+			// Q9
+			var customerGroups =
+				from c in CustomerList
+				group c by c.Country into g
+				select new
+				{
+					Country = g.Key,
+					Count = g.Count(),
+					TotalOrderValue = g.Sum(c =>
+						c.Orders.Sum(o => o.Total))
+				};
+
+			foreach (var group in customerGroups)
+				Console.WriteLine($"{group.Country} - {group.Count} - {group.TotalOrderValue}");
+
+
+			// Q10
+			int totalUnitsInStock = ProductList
+				.Sum(p => p.UnitsInStock);
+
+			Console.WriteLine(totalUnitsInStock);
+
+
+			// Q11
+			var cheapestPrice = ProductList.Min(p => p.UnitPrice);
+			var mostExpensivePrice = ProductList.Max(p => p.UnitPrice);
+
+			Console.WriteLine($"Cheapest: {cheapestPrice}");
+			Console.WriteLine($"Most Expensive: {mostExpensivePrice}");
+
+
+			// Q12
+			var categories = ProductList
+				.Select(p => p.Category)
+				.Distinct();
+
+			foreach (var category in categories)
+				Console.WriteLine(category);
+
+
+			// Q13
+			int[] setA = { 1, 3, 5, 7, 9, 11, 13 };
+			int[] setB = { 3, 6, 9, 12, 15, 13 };
+
+			var difference = setA.Except(setB);
+
+			foreach (var id in difference)
+				Console.WriteLine(id);
+
+
+			// Q14
+			string[] list1 = { "Germany", "France", "UK", "Spain" };
+			string[] list2 = { "france", "SPAIN", "Italy" };
+
+			var countriesDifference = list1.Except(
+				list2,
+				StringComparer.OrdinalIgnoreCase);
+
+			foreach (var country in countriesDifference)
+				Console.WriteLine(country);
+
+
+			// Q15
+			Dictionary<int, Product> productDictionary = ProductList
+				.ToDictionary(p => p.ProductID);
+
+			if (productDictionary.TryGetValue(18, out Product product))
+				Console.WriteLine(product.ProductName);
+
+
+			// Q16
+			var firstProductOver50 = ProductList
+				.First(p => p.UnitPrice > 50);
+
+			Console.WriteLine(firstProductOver50.ProductName);
+
+
+			// Q17
+			var firstProductOver500 = ProductList
+				.FirstOrDefault(p => p.UnitPrice > 500);
+
+			Console.WriteLine(firstProductOver500?.ProductName ?? "null");
+
+
+			// Q18
+			var multiplicationTable = Enumerable.Range(1, 10)
+				.Select(n => $"7 x {n} = {7 * n}");
+
+			foreach (var line in multiplicationTable)
+				Console.WriteLine(line);
+
+
+			// Q19
+			var evenNumbers = Enumerable.Range(1, 30)
+				.Where(n => n % 2 == 0);
+
+			foreach (var number in evenNumbers)
+				Console.WriteLine(number);
+
+
+			// Q20
+			var combinedNames = ProductList
+				.Take(3)
+				.Select(p => p.ProductName)
+				.Concat(
+					CustomerList
+						.Take(3)
+						.Select(c => c.CompanyName));
+
+			foreach (var name in combinedNames)
+				Console.WriteLine(name);
+
+
+			// Q21
+			var productsAndCustomers = ProductList
+				.Zip(
+					CustomerList,
+					(p, c) => $"{p.ProductName} sold to {c.CompanyName}");
+
+			foreach (var item in productsAndCustomers)
+				Console.WriteLine(item);
+
 		}
 	}
 }
